@@ -35,3 +35,17 @@ a.link {
   border-radius: 10px;
   border: 1px solid #eee;
 }
+
+.textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+button.button {
+  border: none;
+  cursor: pointer;
+}

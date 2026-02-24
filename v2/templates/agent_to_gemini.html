@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent → Gemini (ServiceNow REST Planner)</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+  </head>
+  <body>
+    <div class="card">
+      <h1>Agent → Gemini</h1>
+      <p>
+        Describe what you want to <b>get / set / update</b> in ServiceNow.
+        This feature returns a <b>REST API request plan</b> only (no execution).
+      </p>
+
+      <p>
+        <a class="link" href="/">Home</a>
+        &nbsp;|&nbsp;
+        <a class="link" href="/logout">Account</a>
+      </p>
+
+      {% if error %}
+        <p class="error"><b>Error:</b> {{ error }}</p>
+      {% endif %}
+
+      <form method="POST" action="/agent-to-gemini">
+        <label for="prompt"><b>Prompt</b></label>
+        <textarea id="prompt" name="prompt" class="textarea" rows="6" placeholder="Examples:
+- Get task INC0010001
+- Create incident with short_description 'VPN not working'
+- Update incident INC0010001 set priority to 2
+">{{ prompt or "" }}</textarea>
+
+        <p>
+          <button class="button" type="submit">Generate REST Plan</button>
+        </p>
+      </form>
+
+      {% if result %}
+        <h2>Generated REST API Plan</h2>
+        <pre class="pre">{{ result }}</pre>
+      {% endif %}
+    </div>
+  </body>
+</html>

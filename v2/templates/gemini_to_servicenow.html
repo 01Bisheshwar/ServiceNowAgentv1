@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gemini → ServiceNow</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+  </head>
+  <body>
+    <div class="card">
+      <h1>Gemini → ServiceNow</h1>
+      <p>
+        Describe what you want to <b>get / create / update</b> in ServiceNow.
+        Gemini will generate a REST API plan, and this feature will
+        <b>execute it against your ServiceNow instance</b>.
+      </p>
+
+      <p>
+        <a class="link" href="/">Home</a>
+        &nbsp;|&nbsp;
+        <a class="link" href="/logout">Account</a>
+      </p>
+
+      {% if error %}
+        <p class="error"><b>Error:</b> {{ error }}</p>
+      {% endif %}
+
+      <form method="POST" action="/gemini-to-servicenow">
+        <label for="prompt"><b>Prompt</b></label>
+        <textarea id="prompt" name="prompt" class="textarea" rows="5"
+          placeholder="Examples:
+- Get incident INC0010001
+- Create incident: short_description 'VPN not working', priority 2
+- Update incident INC0010001 set state to In Progress">{{ prompt or "" }}</textarea>
+
+        <p>
+          <button class="button" type="submit">Generate & Execute</button>
+        </p>
+      </form>
+
+      <h2>Generated REST Plan</h2>
+      {% if plan %}
+        <pre class="pre">{{ plan }}</pre>
+      {% else %}
+        <p class="muted">No plan generated yet.</p>
+      {% endif %}
+
+      <h2>ServiceNow Response</h2>
+      {% if sn_result %}
+        <pre class="pre">{{ sn_result }}</pre>
+      {% else %}
+        <p class="muted">No execution yet.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

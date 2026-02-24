@@ -45,6 +45,9 @@ a.link {
   margin-top: 8px;
   box-sizing: border-box;
 }
+
+.muted { opacity: 0.75; }
+
 button.button {
   border: none;
   cursor: pointer;

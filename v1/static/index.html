@@ -1,0 +1,1595 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ServiceNow Agent — PwC</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       PwC Light Glass — vibrant gradients, less top congestion
+       ========================================================= */
+    :root {
+      /* brand */
+      --o1: #FF7A00;
+      --o2: #FF4D00;
+
+      --ink: #0B0D12;
+      --ink2: #171A24;
+      --muted: #5D6878;
+
+      /* light surfaces */
+      --bg0: #ffffff;
+      --bg1: #fff5ee;
+      /* warm */
+      --bg2: #fff0e4;
+      /* warmer */
+
+      /* glass recipe */
+      --glassA: rgba(255, 255, 255, .72);
+      --glassB: rgba(255, 255, 255, .50);
+      --glassC: rgba(255, 255, 255, .36);
+
+      --stroke: rgba(10, 12, 18, .10);
+      --stroke2: rgba(10, 12, 18, .14);
+
+      --shadow: 0 30px 80px rgba(10, 12, 18, .16);
+      --shadow2: 0 18px 46px rgba(10, 12, 18, .12);
+
+      --r: 18px;
+      --r2: 24px;
+
+      --good: #0F8A4B;
+      --bad: #D11A2A;
+      --warn: #B45309;
+
+      --topH: 86px;
+      --split: 68%;
+    }
+
+    * { box-sizing: border-box }
+
+    html, body { height: 100% }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--ink);
+      overflow: hidden;
+      background:
+        radial-gradient(1000px 560px at 18% 0%, rgba(255, 122, 0, .28), transparent 60%),
+        radial-gradient(920px 520px at 90% 12%, rgba(255, 77, 0, .20), transparent 60%),
+        radial-gradient(900px 520px at 50% 118%, rgba(10, 12, 18, .06), transparent 65%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 55%, var(--bg2));
+    }
+
+    .fx {
+      position: fixed;
+      inset: -80px;
+      pointer-events: none;
+      background:
+        radial-gradient(1100px 600px at 20% 20%, rgba(255, 122, 0, .12), transparent 60%),
+        radial-gradient(1100px 640px at 80% 10%, rgba(255, 77, 0, .10), transparent 60%),
+        radial-gradient(1100px 700px at 45% 120%, rgba(255, 255, 255, .22), transparent 62%);
+      filter: saturate(1.25);
+      opacity: .95;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift { from { transform: translateY(0) } to { transform: translateY(-14px) } }
+
+    .topWrap {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      padding: 18px 22px 12px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .70), rgba(255, 255, 255, .42));
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(10, 12, 18, .08);
+    }
+
+    .topbar {
+      max-width: 1440px;
+      margin: 0 auto;
+      height: var(--topH);
+      padding: 10px 12px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, .62);
+      box-shadow: var(--shadow);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .52)),
+        radial-gradient(900px 200px at 30% 0%, rgba(255, 122, 0, .14), transparent 55%);
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      animation: topIn .32s ease both;
+    }
+
+    .topbar::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background:
+        radial-gradient(900px 140px at 25% 0%, rgba(255, 255, 255, .75), transparent 60%),
+        radial-gradient(700px 120px at 75% 0%, rgba(255, 255, 255, .55), transparent 60%);
+      opacity: .55;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .topbar::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      pointer-events: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .70);
+    }
+
+    @keyframes topIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 280px }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .72);
+      border: 1px solid rgba(255, 255, 255, .72);
+      box-shadow: 0 16px 36px rgba(255, 77, 0, .22);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .logo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(60px 40px at 25% 0%, rgba(255, 255, 255, .75), transparent 55%);
+      opacity: .7;
+      pointer-events: none;
+    }
+
+    .logo img { width: 40px; height: 40px; object-fit: contain }
+
+    .brand h1 { margin: 0; font-size: 16px; font-weight: 900; letter-spacing: .2px }
+    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12px }
+
+    .topRight {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .64);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .74), rgba(255, 255, 255, .48));
+      box-shadow: 0 14px 30px rgba(10, 12, 18, .10);
+      color: var(--muted);
+      font-size: 12px;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chip::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(220px 50px at 20% 0%, rgba(255, 255, 255, .75), transparent 60%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 4px rgba(15, 138, 75, .14) }
+    .dot.off { background: #9aa3b1; box-shadow: 0 0 0 4px rgba(154, 163, 177, .14) }
+
+    .btn {
+      border: 1px solid rgba(255, 255, 255, .62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .48));
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
+      box-shadow: 0 14px 30px rgba(10, 12, 18, .10);
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(260px 60px at 30% 0%, rgba(255, 255, 255, .75), transparent 60%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 18px 40px rgba(10, 12, 18, .12) }
+    .btn:active { transform: translateY(0) scale(.99) }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none }
+
+    .btn.primary {
+      border: none;
+      color: #fff;
+      background: linear-gradient(135deg, var(--o1), var(--o2));
+      box-shadow: 0 22px 55px rgba(255, 77, 0, .28);
+    }
+    .btn.primary::after { display: none; }
+
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(10, 12, 18, .10);
+      background: rgba(255, 255, 255, .72);
+      color: #707b8d;
+    }
+
+    .row {
+      height: calc(100% - (18px + 12px + var(--topH)));
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 22px 22px;
+      display: grid;
+      grid-template-columns: calc(var(--split) - 10px) 20px calc(100% - var(--split) - 10px);
+      gap: 0;
+      min-width: 0;
+    }
+
+    .gutter { display: flex; align-items: stretch; justify-content: center; padding: 12px 0 }
+    .handle {
+      width: 10px;
+      border-radius: 999px;
+      background: rgba(10, 12, 18, .10);
+      border: 1px solid rgba(255, 255, 255, .60);
+      cursor: col-resize;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55);
+      transition: transform .14s ease, background .14s ease;
+    }
+    .handle:hover { transform: scaleX(1.12); background: rgba(255, 77, 0, .22) }
+
+    .panel {
+      border-radius: var(--r2);
+      border: 1px solid rgba(255, 255, 255, .62);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .70), rgba(255, 255, 255, .42)),
+        radial-gradient(900px 220px at 25% 0%, rgba(255, 122, 0, .10), transparent 60%);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      position: relative;
+      animation: paneIn .25s ease both;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(900px 160px at 25% 0%, rgba(255, 255, 255, .70), transparent 62%);
+      opacity: .55;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: var(--r2);
+      pointer-events: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .70);
+    }
+
+    @keyframes paneIn { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .panelHead {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(10, 12, 18, .08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .64), rgba(255, 255, 255, .42));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 1;
+    }
+
+    .title { display: flex; align-items: center; gap: 10px; font-weight: 900 }
+    .pill {
+      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, .62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .70), rgba(255, 255, 255, .46));
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      box-shadow: 0 12px 26px rgba(10, 12, 18, .10);
+      position: relative;
+      overflow: hidden;
+    }
+    .pill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(220px 50px at 30% 0%, rgba(255, 255, 255, .75), transparent 60%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    .content { padding: 16px; overflow: auto; flex: 1; min-height: 0; z-index: 1; scroll-behavior: smooth; }
+
+    .bubbleRow { display: flex; gap: 10px; margin: 12px 0; align-items: flex-end }
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, .62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .46));
+      box-shadow: var(--shadow2);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      flex: 0 0 auto;
+      z-index: 1;
+    }
+    .avatar.user { color: var(--o2) }
+
+    .bubble {
+      max-width: 78%;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, .62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .44));
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(14px);
+      padding: 12px 14px;
+      line-height: 1.45;
+      position: relative;
+      overflow: hidden;
+      animation: bIn .16s ease both;
+      z-index: 1;
+    }
+    .bubble::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(260px 70px at 30% 0%, rgba(255, 255, 255, .78), transparent 60%);
+      opacity: .55;
+      pointer-events: none;
+    }
+    .bubble.user {
+      margin-left: auto;
+      border-color: rgba(255, 77, 0, .26);
+      background: linear-gradient(180deg, rgba(255, 122, 0, .22), rgba(255, 255, 255, .44));
+    }
+    @keyframes bIn { from { transform: translateY(6px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+
+    .meta { margin-top: 8px; display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 12px }
+    .tag {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(10, 12, 18, .10);
+      background: rgba(255, 255, 255, .72);
+      color: var(--muted);
+    }
+
+    .composer {
+      padding: 12px 14px;
+      border-top: 1px solid rgba(10, 12, 18, .08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .60), rgba(255, 255, 255, .42));
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      z-index: 1;
+    }
+
+    textarea {
+      flex: 1;
+      border-radius: 18px;
+      border: 1px solid rgba(10, 12, 18, .12);
+      background: rgba(255, 255, 255, .74);
+      padding: 12px 12px;
+      min-height: 48px;
+      max-height: 160px;
+      resize: vertical;
+      outline: none;
+      font: inherit;
+      box-shadow: 0 14px 28px rgba(10, 12, 18, .06) inset;
+    }
+
+    textarea:focus {
+      border-color: rgba(255, 77, 0, .32);
+      box-shadow: 0 0 0 4px rgba(255, 77, 0, .14), 0 14px 28px rgba(10, 12, 18, .06) inset;
+    }
+
+    .composerBtns { display: flex; gap: 10px; align-items: center }
+
+    .btnFab {
+      border: 1px solid rgba(255, 255, 255, .62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .46));
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: 900;
+      box-shadow: var(--shadow2);
+      transition: transform .14s ease, box-shadow .14s ease;
+    }
+    .btnFab:hover { transform: translateY(-1px) }
+    .btnFab:active { transform: translateY(0) scale(.99) }
+
+    .bottomBar {
+      padding: 10px 14px;
+      border-top: 1px solid rgba(10, 12, 18, .08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .56), rgba(255, 255, 255, .40));
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      z-index: 1;
+    }
+
+    .bottomLeft { display: flex; gap: 10px; align-items: center; flex-wrap: wrap }
+    .bottomRight { margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap }
+    .small { padding: 8px 12px }
+
+    .planCard {
+      margin-top: 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 77, 0, .24);
+      background: linear-gradient(180deg, rgba(255, 122, 0, .18), rgba(255, 255, 255, .46));
+      padding: 12px 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .planCard::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(500px 140px at 25% 0%, rgba(255, 255, 255, .65), transparent 60%);
+      opacity: .55;
+      pointer-events: none;
+    }
+
+    .planTop { display: flex; justify-content: space-between; align-items: center; gap: 12px; position: relative; z-index: 1 }
+    .planTitle { font-weight: 900 }
+    .planBtns { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; position: relative; z-index: 1 }
+
+    .steps {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .steps li {
+      padding: 10px 0;
+      border-top: 1px dashed rgba(10, 12, 18, .16);
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .steps li:first-child { border-top: none }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      border: 1px solid rgba(10, 12, 18, .12);
+      background: rgba(255, 255, 255, .70);
+      color: var(--muted);
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .badge.ok { color: var(--good); border-color: rgba(15, 138, 75, .25); background: rgba(15, 138, 75, .10) }
+    .badge.fail { color: var(--bad); border-color: rgba(209, 26, 42, .25); background: rgba(209, 26, 42, .10) }
+    .badge.run { color: var(--warn); border-color: rgba(180, 83, 9, .25); background: rgba(180, 83, 9, .10); }
+    .badge.run::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .75), transparent);
+      transform: translateX(-70%);
+      animation: shimmer 1.15s ease-in-out infinite;
+      opacity: .55;
+    }
+    @keyframes shimmer { 0% { transform: translateX(-70%) } 100% { transform: translateX(150%) } }
+
+    .sectionTitle {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      z-index: 1;
+      position: relative;
+    }
+
+    .qpGrid { display: grid; gap: 10px; position: relative; z-index: 1 }
+
+    .qpBtn {
+      width: 100%;
+      text-align: left;
+      padding: 12px 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, .62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .70), rgba(255, 255, 255, .42));
+      box-shadow: var(--shadow2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+      font-weight: 900;
+      position: relative;
+      overflow: hidden;
+    }
+    .qpBtn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(420px 90px at 25% 0%, rgba(255, 255, 255, .75), transparent 60%);
+      opacity: .55;
+      pointer-events: none;
+    }
+    .qpBtn:hover { transform: translateY(-1px); border-color: rgba(255, 77, 0, .22); box-shadow: 0 22px 55px rgba(10, 12, 18, .14); }
+    .qpBtn small { display: block; font-weight: 700; color: var(--muted); margin-top: 2px; position: relative; z-index: 1 }
+    .qpRight { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; color: #7a8597; font-weight: 900; position: relative; z-index: 1 }
+
+    /* Disabled quick prompt look */
+    .qpBtn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: var(--shadow2);
+    }
+
+    .thinking { display: inline-flex; gap: 8px; align-items: center; font-weight: 900; color: var(--muted) }
+    .dots { display: inline-flex; gap: 5px }
+    .dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--o1), var(--o2));
+      display: inline-block;
+      animation: bounce 1.1s infinite ease-in-out;
+      box-shadow: 0 12px 24px rgba(255, 77, 0, .20);
+    }
+    .dots span:nth-child(2) { animation-delay: .15s }
+    .dots span:nth-child(3) { animation-delay: .30s }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: .55 }
+      40% { transform: translateY(-6px); opacity: 1 }
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 18px;
+      display: none;
+      z-index: 90;
+      max-width: 520px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, .62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .76), rgba(255, 255, 255, .48));
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      animation: toastIn .18s ease both;
+      overflow: hidden;
+    }
+    .toast::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(500px 110px at 25% 0%, rgba(255, 255, 255, .78), transparent 60%);
+      opacity: .55;
+      pointer-events: none;
+    }
+    @keyframes toastIn { from { transform: translateY(8px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+    .toast strong { display: block; margin-bottom: 4px; position: relative; z-index: 1 }
+    .toast small { color: var(--muted); position: relative; z-index: 1 }
+
+    .scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 12, 18, .34);
+      backdrop-filter: blur(12px);
+      display: none;
+      z-index: 95;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+
+    .modal {
+      width: min(740px, 100%);
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, .62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .74), rgba(255, 255, 255, .46));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+      animation: pop .18s ease both;
+      position: relative;
+    }
+    .modal::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(720px 140px at 25% 0%, rgba(255, 255, 255, .78), transparent 62%);
+      opacity: .55;
+      pointer-events: none;
+    }
+    @keyframes pop { from { transform: translateY(10px) scale(.99); opacity: 0 } to { transform: translateY(0) scale(1); opacity: 1 } }
+
+    .modalHead {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(10, 12, 18, .08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .modalBody { padding: 14px 16px; position: relative; z-index: 1 }
+    .input {
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid rgba(10, 12, 18, .12);
+      background: rgba(255, 255, 255, .76);
+      padding: 12px 12px;
+      outline: none;
+      font: inherit;
+    }
+    .input:focus { border-color: rgba(255, 77, 0, .30); box-shadow: 0 0 0 4px rgba(255, 77, 0, .14); }
+
+    .cmdList { margin-top: 12px; display: grid; gap: 10px }
+
+    .cmdItem {
+      border: 1px solid rgba(255, 255, 255, .62);
+      background: linear-gradient(180deg, rgba(255, 255, 255, .70), rgba(255, 255, 255, .42));
+      padding: 12px 12px;
+      border-radius: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .cmdItem::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(520px 90px at 25% 0%, rgba(255, 255, 255, .75), transparent 62%);
+      opacity: .55;
+      pointer-events: none;
+    }
+    .cmdItem:hover { transform: translateY(-1px); border-color: rgba(255, 77, 0, .20); box-shadow: 0 22px 55px rgba(10, 12, 18, .12); }
+    .cmdItem small { display: block; color: var(--muted); font-weight: 700; position: relative; z-index: 1 }
+    .cmdRight { display: flex; align-items: center; gap: 8px; color: #7a8597; font-weight: 900; flex: 0 0 auto; position: relative; z-index: 1 }
+
+    @media (max-width: 1100px) {
+      .row { grid-template-columns: 1fr; gap: 18px }
+      .gutter { display: none }
+      .brand { min-width: unset }
+      .topRight { gap: 8px }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="fx" aria-hidden="true"></div>
+
+  <div class="topWrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo"><img src="/static/pwc-logo.png" alt="PwC" /></div>
+        <div>
+          <h1>ServiceNow Agent</h1>
+          <p>Plan preview → confirm → execute (runs as you)</p>
+        </div>
+      </div>
+
+      <div class="topRight">
+        <button class="btn" id="cmdBtn" title="Command palette (Ctrl/⌘K)">
+          ⌘ Commands <span class="kbd">Ctrl K</span>
+        </button>
+
+        <button class="btn" id="exportTopBtn" title="Export chat history JSON">⬇ Export</button>
+
+        <div class="chip" id="loginPill">
+          <span class="dot" id="loginDot"></span>
+          <span id="loginText">Checking…</span>
+        </div>
+
+        <button class="btn" id="loginBtn" style="display:none;">Login</button>
+        <button class="btn" id="logoutBtn" style="display:none;">Logout</button>
+
+        <button class="btn primary" id="newBtn">New session</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- CHAT -->
+    <div class="panel" id="chatPanel">
+      <div class="panelHead">
+        <div class="title">💬 Chat <span class="pill" id="sessionChip">Session: new</span></div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <span class="pill" id="userChip">Not logged in</span>
+          <span class="pill" id="plannerChip">Planner: —</span>
+        </div>
+      </div>
+
+      <div class="content" id="chat"></div>
+
+      <div class="composer">
+        <textarea id="msg"
+          placeholder="Ask Agent to do something in ServiceNow… (Enter to send, Shift+Enter newline)"></textarea>
+        <div class="composerBtns">
+          <button class="btnFab" id="suggestBtn" title="Insert example prompt">✨</button>
+          <button class="btn primary" id="sendBtn" style="border-radius:16px;">Send</button>
+        </div>
+      </div>
+
+      <div class="bottomBar">
+        <div class="bottomLeft">
+          <button class="btn small" id="uploadBtn">Upload context</button>
+          <input type="file" id="file" style="display:none;" />
+          <label style="display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px;cursor:pointer;">
+            <input type="checkbox" id="showLogs" />
+            Show tool logs
+          </label>
+          <span class="pill" id="ctx">No file attached.</span>
+        </div>
+
+        <div class="bottomRight">
+          <button class="btn small" id="scrollBottomBtn">Latest ↓</button>
+          <button class="btn small" id="clearHistoryBtn">Clear</button>
+          <button class="btn small" id="helpBtn">Help</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GUTTER -->
+    <div class="gutter">
+      <div class="handle" id="handle" title="Drag to resize"></div>
+    </div>
+
+    <!-- CONSOLE -->
+    <div class="panel" id="consolePanel">
+      <div class="panelHead">
+        <div class="title">🧩 Console</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button class="btn small" id="collapseConsoleBtn">Collapse</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="sectionTitle">
+          <span>Quick prompts</span>
+          <span class="pill">Alt + 1…6</span>
+        </div>
+
+        <div class="qpGrid" id="qpGrid">
+          <button class="qpBtn" data-qp="Create an update set named 'My Update Set'.">
+            <div>
+              🛠️ Create update set
+              <small>Create & return sys_id</small>
+            </div>
+            <div class="qpRight"><span class="kbd">Alt 1</span></div>
+          </button>
+
+          <button class="qpBtn" data-qp="Set update set 'My Update Set' as current.">
+            <div>
+              ✅ Set update set current
+              <small>Switch current update set</small>
+            </div>
+            <div class="qpRight"><span class="kbd">Alt 2</span></div>
+          </button>
+
+          <button class="qpBtn" data-qp="Create an incident with short_description 'Test from Agent'.">
+            <div>
+              ➕ Create incident
+              <small>Minimal fields, safe test</small>
+            </div>
+            <div class="qpRight"><span class="kbd">Alt 3</span></div>
+          </button>
+
+          <button class="qpBtn" data-qp="Query a user named 'Admin'.">
+            <div>
+              👤 Query a user
+              <small>Lookup sys_user record</small>
+            </div>
+            <div class="qpRight"><span class="kbd">Alt 4</span></div>
+          </button>
+
+          <button class="qpBtn"
+            data-qp="List the last 10 incidents created today, showing number, short_description, state, sys_created_on.">
+            <div>
+              🧾 List recent incidents
+              <small>Verify changes quickly</small>
+            </div>
+            <div class="qpRight"><span class="kbd">Alt 5</span></div>
+          </button>
+
+          <button class="qpBtn"
+            data-qp="Validate the current update set: show name, sys_id, state, and whether it’s default.">
+            <div>
+              🧪 Validate current update set
+              <small>Prevent “wrong set” issues</small>
+            </div>
+            <div class="qpRight"><span class="kbd">Alt 6</span></div>
+          </button>
+        </div>
+
+        <div style="margin-top:18px; display:none;" id="logsBox">
+          <div class="sectionTitle">
+            <span>Tool logs</span>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <button class="btn small" id="copyLogsBtn">Copy</button>
+              <button class="btn small" id="clearLogsBtn">Clear</button>
+            </div>
+          </div>
+          <pre id="logs"
+            style="white-space:pre-wrap;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.62);padding:12px;border-radius:18px;overflow:auto;max-height:260px;box-shadow:var(--shadow2);"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <strong id="toastTitle">Notice</strong>
+    <small id="toastBody"></small>
+  </div>
+
+  <!-- Command palette / Help modal -->
+  <div class="scrim" id="scrim" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal">
+      <div class="modalHead">
+        <b id="modalTitle">Commands</b>
+        <button class="btn small" id="closeModalBtn">Close</button>
+      </div>
+      <div class="modalBody">
+        <input class="input" id="cmdSearch" placeholder="Type to filter… (e.g., export, clear, logs, login)" />
+        <div class="cmdList" id="cmdList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function readJsonSafe(r) {
+      const text = await r.text();
+      try { return JSON.parse(text); }
+      catch { return { error: text || `HTTP ${r.status}` }; }
+    }
+
+    const chat = document.getElementById('chat');
+    const msg = document.getElementById('msg');
+    const sendBtn = document.getElementById('sendBtn');
+    const suggestBtn = document.getElementById('suggestBtn');
+
+    const uploadBtn = document.getElementById('uploadBtn');
+    const file = document.getElementById('file');
+    const ctxChip = document.getElementById('ctx');
+    const showLogs = document.getElementById('showLogs');
+    const logsBox = document.getElementById('logsBox');
+    const logsPre = document.getElementById('logs');
+
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    const scrollBottomBtn = document.getElementById('scrollBottomBtn');
+
+    const loginText = document.getElementById('loginText');
+    const loginDot = document.getElementById('loginDot');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userChip = document.getElementById('userChip');
+    const plannerChip = document.getElementById('plannerChip');
+    const sessionChip = document.getElementById('sessionChip');
+
+    const toast = document.getElementById('toast');
+    const toastTitle = document.getElementById('toastTitle');
+    const toastBody = document.getElementById('toastBody');
+
+    const cmdBtn = document.getElementById('cmdBtn');
+    const exportTopBtn = document.getElementById('exportTopBtn');
+    const helpBtn = document.getElementById('helpBtn');
+
+    const scrim = document.getElementById('scrim');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalTitle = document.getElementById('modalTitle');
+    const cmdSearch = document.getElementById('cmdSearch');
+    const cmdList = document.getElementById('cmdList');
+
+    const copyLogsBtn = document.getElementById('copyLogsBtn');
+    const clearLogsBtn = document.getElementById('clearLogsBtn');
+
+    const handle = document.getElementById('handle');
+    const consolePanel = document.getElementById('consolePanel');
+    const collapseConsoleBtn = document.getElementById('collapseConsoleBtn');
+
+    let attachedContextText = null;
+    let loggedIn = false;
+
+    const LS_KEY = "sn_agent_chat_history_glass_v2";
+    const LS_SPLIT = "sn_agent_split_glass_v2";
+
+    function nowTime() {
+      const d = new Date();
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function toastMsg(title, body) {
+      toastTitle.textContent = title;
+      toastBody.textContent = body || '';
+      toast.style.display = 'block';
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.style.display = 'none', 3200);
+    }
+
+    /* =========================================================
+       ✅ UI gating helpers (UX only)
+       ========================================================= */
+    function requireLogin(actionLabel) {
+      if (loggedIn) return true;
+      toastMsg("Login required", `Please log in to ServiceNow to ${actionLabel}.`);
+      return false;
+    }
+
+    function applyLoginGating() {
+      // We are gating EXECUTION actions (not planning).
+      // Keep planning enabled so users can preview plans while logged out.
+      // If you want to block planning too, uncomment:
+      // sendBtn.disabled = !loggedIn;
+      // msg.disabled = !loggedIn;
+
+      // Gate quick prompts (optional but nice UX)
+      document.querySelectorAll('.qpBtn').forEach(btn => {
+        btn.disabled = !loggedIn;
+      });
+    }
+
+    function addBubble(who, html) {
+      const row = document.createElement('div');
+      row.className = 'bubbleRow';
+
+      if (who === 'agent') {
+        const av = document.createElement('div');
+        av.className = 'avatar';
+        av.textContent = 'A';
+        row.appendChild(av);
+      }
+
+      const b = document.createElement('div');
+      b.className = 'bubble' + (who === 'user' ? ' user' : '');
+      b.innerHTML = html;
+      row.appendChild(b);
+
+      if (who === 'user') {
+        const av = document.createElement('div');
+        av.className = 'avatar user';
+        av.textContent = 'U';
+        row.appendChild(av);
+      }
+
+      chat.appendChild(row);
+      chat.scrollTop = chat.scrollHeight;
+
+      saveHistory();
+      return b;
+    }
+
+    function setThinking(on) {
+      const existing = document.getElementById('thinkingRow');
+      if (on) {
+        if (existing) return;
+        const row = document.createElement('div');
+        row.id = 'thinkingRow';
+        row.className = 'bubbleRow';
+
+        const av = document.createElement('div');
+        av.className = 'avatar';
+        av.textContent = 'A';
+
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        b.innerHTML = `
+          <div class="thinking">
+            Thinking <span class="dots"><span></span><span></span><span></span></span>
+          </div>
+          <div class="meta"><span class="tag">planner</span><span>${nowTime()}</span></div>
+        `;
+        row.appendChild(av);
+        row.appendChild(b);
+        chat.appendChild(row);
+        chat.scrollTop = chat.scrollHeight;
+      } else {
+        if (existing) existing.remove();
+      }
+    }
+
+    function saveHistory() { localStorage.setItem(LS_KEY, chat.innerHTML); }
+    function loadHistory() {
+      const h = localStorage.getItem(LS_KEY);
+      if (h) { chat.innerHTML = h; chat.scrollTop = chat.scrollHeight; return true; }
+      return false;
+    }
+    function clearHistory() { localStorage.removeItem(LS_KEY); chat.innerHTML = ''; }
+
+    function renderWelcome() {
+      if (chat.innerHTML.trim().length) return;
+      addBubble('agent', `
+        ${loggedIn ? "Welcome back. What do you want to do in ServiceNow?" : "Hi! Login when you're ready, then tell me what to do."}
+        <div class="meta"><span class="tag">welcome</span><span>${nowTime()}</span></div>
+      `);
+    }
+
+    async function refreshMe() {
+      const r = await fetch('/api/me', { credentials: 'include' });
+      const j = await readJsonSafe(r);
+
+      loggedIn = !!j.loggedIn;
+
+      if (loggedIn) {
+        loginText.textContent = 'Logged in';
+        loginDot.classList.remove('off');
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        userChip.textContent = j.user?.name || j.user?.user_name || 'User';
+      } else {
+        loginText.textContent = 'Not logged in';
+        loginDot.classList.add('off');
+        loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        userChip.textContent = 'Not logged in';
+      }
+
+      // ✅ Apply UX gating whenever login state changes
+      applyLoginGating();
+    }
+
+    function renderPlanCard(plan, meta) {
+      const steps = (plan.steps || []).map((s, i) => {
+        const op = escapeHtml((s.operation || '').toUpperCase());
+        const table = escapeHtml(s.table || '');
+        const fields = s.fields ? Object.keys(s.fields).join(', ') : '';
+        const q = s.query ? ` query="${escapeHtml(s.query)}"` : '';
+        const note = escapeHtml(s.note || '');
+        return `
+          <li data-step="${i + 1}">
+            <div style="min-width:0">
+              <div><b>${i + 1}. ${op}</b> <span>${table}</span>${fields ? ` (fields: ${escapeHtml(fields)})` : ''}${q}</div>
+              ${note ? `<div style="margin-top:4px;color:var(--muted);font-family:Inter;font-size:12px;">${note}</div>` : ''}
+            </div>
+            <div><span class="badge" data-badge="${i + 1}">pending</span></div>
+          </li>
+        `;
+      }).join('');
+
+      const bubble = addBubble('agent', `
+        <div style="font-weight:900;">Here’s the proposed plan:</div>
+        <div class="planCard">
+          <div class="planTop">
+            <div>
+              <div class="planTitle">${escapeHtml(plan.title || 'Plan')}</div>
+              <div style="color:var(--muted);font-size:12px;margin-top:2px;">
+                ${meta?.planner ? `Planner: <b>${escapeHtml(meta.planner)}</b>` : ''}
+              </div>
+            </div>
+            <div class="planBtns">
+              <button class="btn primary small" id="goBtn">Go ahead</button>
+              <button class="btn small" id="modBtn">Modify</button>
+              <button class="btn small" id="cancelBtn" style="background:rgba(209,26,42,.10);border-color:rgba(209,26,42,.20);color:#8a0f18;">Cancel</button>
+            </div>
+          </div>
+          <ul class="steps" id="stepsList">${steps || '<li>(No steps returned)</li>'}</ul>
+        </div>
+        <div class="meta"><span class="tag">preview</span><span>${nowTime()}</span></div>
+      `);
+
+      const goBtn = bubble.querySelector('#goBtn');
+      const modBtn = bubble.querySelector('#modBtn');
+      const cancelBtn = bubble.querySelector('#cancelBtn');
+
+      function lock() { goBtn.disabled = modBtn.disabled = cancelBtn.disabled = true; }
+      function unlock() { goBtn.disabled = modBtn.disabled = cancelBtn.disabled = false; }
+
+      // ✅ Disable plan actions when not logged in (UX only)
+      const updatePlanButtons = () => {
+        const disabled = !loggedIn;
+        goBtn.disabled = disabled;
+        modBtn.disabled = disabled;
+        cancelBtn.disabled = disabled;
+      };
+      updatePlanButtons();
+
+      cancelBtn.onclick = async () => {
+        if (!requireLogin("cancel actions")) return;
+
+        lock(); setThinking(true);
+        const r = await fetch('/api/confirm', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'cancel' })
+        });
+        const j = await readJsonSafe(r);
+        setThinking(false);
+
+        if (j.error) {
+          addBubble('agent', `❌ ${escapeHtml(j.error)}<div class="meta"><span class="tag">error</span><span>${nowTime()}</span></div>`);
+          unlock(); return;
+        }
+        addBubble('agent', `${escapeHtml(j.reply || 'Cancelled.')}<div class="meta"><span class="tag">cancel</span><span>${nowTime()}</span></div>`);
+      };
+
+      modBtn.onclick = async () => {
+        if (!requireLogin("modify the plan")) return;
+
+        const text = prompt("Modify the request. What should I do instead?");
+        if (!text) return;
+
+        lock();
+        addBubble('user', `${escapeHtml(text)}<div class="meta"><span class="tag">modify</span><span>${nowTime()}</span></div>`);
+        setThinking(true);
+
+        const r = await fetch('/api/confirm', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'modify', modifyText: text })
+        });
+        const j = await readJsonSafe(r);
+        setThinking(false);
+
+        if (j.error) {
+          toastMsg("Modify failed", j.error);
+          addBubble('agent', `❌ ${escapeHtml(j.error)}<div class="meta"><span class="tag">error</span><span>${nowTime()}</span></div>`);
+          unlock(); return;
+        }
+
+        if (plannerChip)
+          plannerChip.textContent = `Planner: ${j.meta?.planner || '—'}`;
+
+        renderPlanCard(j.plan, j.meta);
+      };
+
+      goBtn.onclick = async () => {
+        if (!requireLogin("execute this plan")) return;
+
+        lock();
+
+        const badge1 = bubble.querySelector(`[data-badge="1"]`);
+        if (badge1) { badge1.textContent = "running"; badge1.className = "badge run"; }
+
+        const es = new EventSource('/api/execute_stream', { withCredentials: true });
+
+        es.addEventListener("step", (ev) => {
+          const s = JSON.parse(ev.data);
+          const badge = bubble.querySelector(`[data-badge="${s.i}"]`);
+          if (!badge) return;
+
+          if (s.ok) {
+            badge.textContent = `ok (${s.durationMs}ms)`;
+            badge.className = "badge ok";
+            const next = bubble.querySelector(`[data-badge="${s.i + 1}"]`);
+            if (next) {
+              next.textContent = "running";
+              next.className = "badge run";
+            }
+          } else {
+            badge.textContent = "failed";
+            badge.className = "badge fail";
+          }
+
+          if (showLogs.checked) {
+            logsBox.style.display = 'block';
+            logsPre.textContent = JSON.stringify(s, null, 2);
+          }
+        });
+
+        es.addEventListener("done", (ev) => {
+          const result = JSON.parse(ev.data);
+
+          bubble.querySelectorAll('[data-badge]').forEach(b => {
+            if (b.textContent === "pending" || b.textContent === "running") {
+              b.textContent = "skipped";
+              b.className = "badge";
+            }
+          });
+
+          const okCount = (result.steps || []).filter(x => x.ok).length;
+          addBubble('agent', `✅ Done. ${okCount}/${(result.steps || []).length} steps succeeded.<div class="meta"><span class="tag">execute</span><span>${nowTime()}</span></div>`);
+
+          const querySteps = (result.steps || []).filter(s =>
+            s.ok && String(s.operation).toLowerCase() === "query" && Array.isArray(s.displayRows)
+          );
+
+          querySteps.forEach((s) => {
+            const rows = s.displayRows || [];
+            const title = `Query results: ${escapeHtml(s.table || '')}`;
+            const metaLine = escapeHtml(s.query || '');
+            const pretty = escapeHtml(JSON.stringify(rows, null, 2));
+
+            addBubble('agent', `
+              <div style="font-weight:900;">${title}</div>
+              <div style="margin-top:6px;color:var(--muted);font-size:12px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;">
+                ${metaLine}
+              </div>
+              <pre style="margin-top:10px;white-space:pre-wrap;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.62);padding:12px;border-radius:18px;overflow:auto;max-height:320px;box-shadow:var(--shadow2);">${pretty}</pre>
+              <div class="meta"><span class="tag">query</span><span>${nowTime()}</span></div>
+            `);
+          });
+
+          if (showLogs.checked) {
+            logsBox.style.display = 'block';
+            logsPre.textContent = JSON.stringify(result, null, 2);
+          }
+
+          es.close();
+        });
+
+        es.addEventListener("error", () => {
+          toastMsg("Execution failed", "Check logs / server console");
+          addBubble('agent', `❌ Execution stream failed.<div class="meta"><span class="tag">error</span><span>${nowTime()}</span></div>`);
+          es.close();
+          unlock();
+        });
+      };
+    }
+
+    async function sendMessage(text) {
+      const t = text.trim();
+      if (!t) return;
+
+      addBubble('user', `${escapeHtml(t)}<div class="meta"><span class="tag">you</span><span>${nowTime()}</span></div>`);
+      msg.value = '';
+
+      setThinking(true);
+      const r = await fetch('/api/plan', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: t, contextText: attachedContextText })
+      });
+      const j = await readJsonSafe(r);
+      setThinking(false);
+
+      if (j.error) {
+        toastMsg("Plan failed", j.error);
+        addBubble('agent', `❌ ${escapeHtml(j.error)}<div class="meta"><span class="tag">error</span><span>${nowTime()}</span></div>`);
+        return;
+      }
+
+      if (plannerChip)
+        plannerChip.textContent = `Planner: ${j.meta?.planner || '—'}`;
+      if (j.reply) {
+        addBubble('agent', `${escapeHtml(j.reply)}<div class="meta"><span class="tag">reply</span><span>${nowTime()}</span></div>`);
+      }
+      renderPlanCard(j.plan, j.meta);
+    }
+
+    function exportChat() {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        session: sessionChip.textContent,
+        user: userChip.textContent,
+        ctx: ctxChip.textContent,
+        html: chat.innerHTML
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sn_agent_export_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toastMsg("Exported", "Downloaded JSON export.");
+    }
+
+    showLogs.onchange = () => { logsBox.style.display = showLogs.checked ? 'block' : 'none'; };
+    copyLogsBtn.onclick = async () => {
+      const t = logsPre.textContent || '';
+      if (!t.trim()) { toastMsg("Nothing to copy", "No logs available yet."); return; }
+      try { await navigator.clipboard.writeText(t); toastMsg("Copied", "Logs copied."); }
+      catch { toastMsg("Copy failed", "Clipboard permissions blocked."); }
+    };
+    clearLogsBtn.onclick = () => { logsPre.textContent = ''; toastMsg("Cleared", "Logs cleared."); };
+
+    uploadBtn.onclick = () => file.click();
+    file.onchange = async () => {
+      if (!file.files?.length) return;
+      const f = file.files[0];
+      const fd = new FormData();
+      fd.append('file', f);
+
+      toastMsg("Uploading…", f.name);
+      const r = await fetch('/api/upload', { method: 'POST', credentials: 'include', body: fd });
+      const j = await readJsonSafe(r);
+      if (j.error) { toastMsg("Upload failed", j.error); return; }
+
+      attachedContextText = j.text || null;
+      ctxChip.textContent = attachedContextText ? `Attached: ${j.filename} (${j.size} bytes)` : `Attached: ${j.filename} (binary)`;
+      toastMsg("Uploaded", j.filename);
+    };
+
+    clearHistoryBtn.onclick = () => {
+      if (!confirm("Clear local chat history?")) return;
+      localStorage.removeItem(LS_KEY);
+      chat.innerHTML = '';
+      renderWelcome();
+      toastMsg("Cleared", "Local chat history removed.");
+    };
+    scrollBottomBtn.onclick = () => { chat.scrollTop = chat.scrollHeight; };
+
+    suggestBtn.onclick = () => {
+      const samples = [
+        "Create an update set named 'Rithika - HR Fixes' and set it as current.",
+        "List the last 10 incidents created today, showing number, short_description, state, sys_created_on.",
+        "Query user 'admin' and show user_name, active, last_login_time."
+      ];
+      msg.value = samples[Math.floor(Math.random() * samples.length)];
+      msg.focus();
+      toastMsg("Suggested", "Example prompt inserted.");
+    };
+
+    sendBtn.onclick = () => sendMessage(msg.value);
+    msg.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage(msg.value);
+      }
+    });
+
+    // New session button (kept as in your version)
+    document.getElementById('newBtn').onclick = () => {
+      async function newSession() {
+        try {
+          await fetch('/api/new_session', { method: 'POST', credentials: 'include' });
+        } catch (e) { }
+        clearHistory();
+        attachedContextText = null;
+        ctxChip.textContent = 'No file attached.';
+        msg.value = '';
+        const sid = `Session: ${new Date().toLocaleString()}`;
+        sessionChip.textContent = sid;
+        renderWelcome();
+        toastMsg("New session", "Started a fresh session (cleared history + context).");
+      }
+      document.getElementById('newBtn').onclick = newSession;
+      sessionChip.textContent = 'Session: new';
+      toastMsg("New session", "Started a new local session label.");
+      if (!chat.innerHTML.trim()) renderWelcome();
+    };
+
+    loginBtn.onclick = () => location.href = '/login';
+    logoutBtn.onclick = () => location.href = '/logout';
+    exportTopBtn.onclick = exportChat;
+
+    function setSplit(pct) {
+      const clamped = Math.max(52, Math.min(78, pct));
+      document.documentElement.style.setProperty('--split', clamped + '%');
+      localStorage.setItem(LS_SPLIT, String(clamped));
+    }
+    (function initSplit() {
+      const saved = parseFloat(localStorage.getItem(LS_SPLIT) || '');
+      if (!Number.isNaN(saved)) setSplit(saved);
+    })();
+
+    (function wireResizer() {
+      let dragging = false;
+      function onMove(e) {
+        if (!dragging) return;
+        const x = (e.touches ? e.touches[0].clientX : e.clientX);
+        const rowRect = document.querySelector('.row').getBoundingClientRect();
+        const pct = ((x - rowRect.left) / rowRect.width) * 100;
+        setSplit(pct);
+      }
+      function onUp() {
+        dragging = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('touchend', onUp);
+      }
+      function onDown(e) {
+        if (window.matchMedia('(max-width: 1100px)').matches) return;
+        dragging = true;
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        window.addEventListener('touchmove', onMove, { passive: false });
+        window.addEventListener('touchend', onUp);
+        e.preventDefault?.();
+      }
+      handle.addEventListener('mousedown', onDown);
+      handle.addEventListener('touchstart', onDown, { passive: false });
+    })();
+
+    let consoleCollapsed = false;
+    collapseConsoleBtn.onclick = () => {
+      consoleCollapsed = !consoleCollapsed;
+      if (consoleCollapsed) {
+        setSplit(92);
+        consolePanel.style.display = 'none';
+        collapseConsoleBtn.textContent = 'Expand';
+        toastMsg("Console", "Collapsed.");
+      } else {
+        consolePanel.style.display = '';
+        collapseConsoleBtn.textContent = 'Collapse';
+        const saved = parseFloat(localStorage.getItem(LS_SPLIT) || '68');
+        setSplit(saved);
+        toastMsg("Console", "Expanded.");
+      }
+    };
+
+    const commands = [
+      { id: 'export', title: 'Export chat JSON', desc: 'Download current chat history', run: exportChat },
+      { id: 'toggleLogs', title: 'Toggle tool logs', desc: 'Show/hide logs', run: () => { showLogs.checked = !showLogs.checked; showLogs.dispatchEvent(new Event('change')); } },
+      { id: 'scrollLatest', title: 'Scroll to latest', desc: 'Jump to bottom', run: () => scrollBottomBtn.click() },
+      { id: 'clear', title: 'Clear local history', desc: 'Remove saved chat HTML', run: () => clearHistoryBtn.click() },
+      { id: 'collapse', title: 'Collapse/Expand console', desc: 'Toggle right panel', run: () => collapseConsoleBtn.click() },
+      { id: 'login', title: 'Login', desc: 'Go to /login', run: () => location.href = '/login' },
+      { id: 'logout', title: 'Logout', desc: 'Go to /logout', run: () => location.href = '/logout' },
+      { id: 'help', title: 'Help', desc: 'Shortcuts + tips', run: () => openHelp() },
+    ];
+
+    function openModal(title) {
+      modalTitle.textContent = title;
+      scrim.style.display = 'flex';
+      scrim.setAttribute('aria-hidden', 'false');
+      cmdSearch.value = '';
+      renderCmdList('');
+      setTimeout(() => cmdSearch.focus(), 0);
+    }
+    function closeModal() {
+      scrim.style.display = 'none';
+      scrim.setAttribute('aria-hidden', 'true');
+    }
+    function renderCmdList(filter) {
+      const f = (filter || '').toLowerCase().trim();
+      const items = commands
+        .filter(c => !f || (c.title + ' ' + c.desc).toLowerCase().includes(f))
+        .map(c => `
+          <div class="cmdItem" data-cmd="${escapeHtml(c.id)}">
+            <div>
+              <div style="font-weight:900;position:relative;z-index:1">${escapeHtml(c.title)}</div>
+              <small>${escapeHtml(c.desc || '')}</small>
+            </div>
+            <div class="cmdRight"></div>
+          </div>
+        `).join('');
+      cmdList.innerHTML = items || `<div class="pill">No matches.</div>`;
+      cmdList.querySelectorAll('[data-cmd]').forEach(el => {
+        el.onclick = () => {
+          const id = el.getAttribute('data-cmd');
+          const cmd = commands.find(x => x.id === id);
+          closeModal();
+          cmd?.run?.();
+        };
+      });
+    }
+
+    function openHelp() {
+      openModal('Help');
+      cmdSearch.value = '';
+      cmdList.innerHTML = `
+        <div class="cmdItem" style="cursor:default">
+          <div><div style="font-weight:900;position:relative;z-index:1">Send message</div><small>Enter (Shift+Enter for newline)</small></div>
+          <div class="cmdRight"><span class="kbd">Enter</span></div>
+        </div>
+        <div class="cmdItem" style="cursor:default">
+          <div><div style="font-weight:900;position:relative;z-index:1">Command palette</div><small>Quick actions</small></div>
+          <div class="cmdRight"><span class="kbd">Ctrl/⌘K</span></div>
+        </div>
+        <div class="cmdItem" style="cursor:default">
+          <div><div style="font-weight:900;position:relative;z-index:1">Quick prompts</div><small>Insert prompt into composer</small></div>
+          <div class="cmdRight"><span class="kbd">Alt 1…6</span></div>
+        </div>
+        <div style="margin-top:10px;color:var(--muted);font-size:12px;line-height:1.55;position:relative;z-index:1">
+          Tip: Turn on <b>Show tool logs</b> when debugging, then export chat JSON for easy repro.
+        </div>
+      `;
+      cmdSearch.blur();
+    }
+
+    cmdBtn.onclick = () => openModal('Commands');
+    helpBtn.onclick = () => openHelp();
+    closeModalBtn.onclick = closeModal;
+    scrim.addEventListener('click', (e) => { if (e.target === scrim) closeModal(); });
+    cmdSearch.addEventListener('input', () => renderCmdList(cmdSearch.value));
+
+    window.addEventListener('keydown', (e) => {
+      const isMac = navigator.platform.toUpperCase().includes('MAC');
+      const cmdK = (isMac ? e.metaKey : e.ctrlKey) && e.key.toLowerCase() === 'k';
+      if (cmdK) { e.preventDefault(); openModal('Commands'); }
+      if (e.key === 'Escape') { if (scrim.style.display === 'flex') closeModal(); }
+
+      // Quick prompts: block if logged out (toast)
+      if (e.altKey && /^[1-6]$/.test(e.key)) {
+        if (!requireLogin("use quick prompts")) { e.preventDefault(); return; }
+        const idx = Number(e.key) - 1;
+        const btns = Array.from(document.querySelectorAll('#qpGrid [data-qp]'));
+        if (btns[idx]) { btns[idx].click(); e.preventDefault(); }
+      }
+    });
+
+    /* Quick prompts */
+    document.querySelectorAll('[data-qp]').forEach(b => {
+      b.addEventListener('click', () => {
+        if (!requireLogin("use quick prompts")) return;
+        msg.value = b.getAttribute('data-qp');
+        msg.focus();
+      });
+    });
+
+    /* Init */
+    (async function init() {
+      await refreshMe();
+
+      const h = localStorage.getItem(LS_KEY);
+      if (h) {
+        chat.innerHTML = h;
+        chat.scrollTop = chat.scrollHeight;
+      } else {
+        renderWelcome();
+      }
+    })();
+  </script>
+</body>
+
+</html>

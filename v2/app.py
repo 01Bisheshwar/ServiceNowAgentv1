@@ -6,6 +6,7 @@ from features.login import login_bp
 from features.logout import logout_bp
 from features.Gemini.agent_to_gemini import agent_gemini_bp
 from features.Gemini.gemini_to_servicenow import gemini_to_sn_bp
+from features.Gemini.conversational_agent import conv_agent_bp
 
 # Validate env at startup
 Config.validate()
@@ -17,6 +18,7 @@ app.register_blueprint(login_bp)
 app.register_blueprint(logout_bp)
 app.register_blueprint(agent_gemini_bp)
 app.register_blueprint(gemini_to_sn_bp)
+app.register_blueprint(conv_agent_bp)
 
 
 @app.route("/")

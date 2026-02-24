@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Conversational ServiceNow Agent</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+  </head>
+  <body>
+    <div class="card">
+      <h1>Conversational ServiceNow Agent</h1>
+      <p class="muted">
+        Talk to the agent. It will ask follow-up questions when needed,
+        and can execute actions in your ServiceNow instance.
+      </p>
+
+      <p>
+        <a class="link" href="/">Home</a>
+        &nbsp;|&nbsp;
+        <a class="link" href="/logout">Account</a>
+      </p>
+
+      {% if error %}
+        <p class="error"><b>Error:</b> {{ error }}</p>
+      {% endif %}
+
+      <h2>Conversation</h2>
+      <div class="chatbox">
+        {% if chat and chat|length > 0 %}
+          {% for m in chat %}
+            {% set kind = m.get('kind', 'normal') %}
+            <div class="msg {{ 'user' if m.role == 'user' else 'assistant' }} {{ kind }}">
+              <div class="role">
+                {{ 'You' if m.role == 'user' else 'Agent' }}
+                {% if kind == 'question' %}
+                  <span class="badge">Question</span>
+                {% elif kind == 'error' %}
+                  <span class="badge badge-error">Error</span>
+                {% elif kind == 'info' %}
+                  <span class="badge badge-info">Info</span>
+                {% endif %}
+              </div>
+              <pre class="pre">{{ m.text }}</pre>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="muted">No messages yet. Try: “Create an incident for VPN issue”.</p>
+        {% endif %}
+      </div>
+
+      <form method="POST" action="/conversational-agent">
+        <label for="message"><b>Message</b></label>
+        <textarea id="message" name="message" class="textarea" rows="4"
+          placeholder="Examples:
+- Create an incident for email issue
+- Change the priority of the incident you just created to 2
+- Show me the incident you created earlier"></textarea>
+        <p>
+          <button class="button" type="submit">Send</button>
+        </p>
+      </form>
+
+      <hr />
+
+      <h2>Latest REST Plan</h2>
+      {% if last_plan %}
+        <pre class="pre">{{ last_plan }}</pre>
+      {% else %}
+        <p class="muted">No REST plan generated yet.</p>
+      {% endif %}
+
+      <h2>Last Execution Result</h2>
+      {% if last_execution %}
+        <pre class="pre">{{ last_execution }}</pre>
+      {% else %}
+        <p class="muted">No execution yet.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

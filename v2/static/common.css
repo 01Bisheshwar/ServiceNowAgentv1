@@ -52,3 +52,56 @@ button.button {
   border: none;
   cursor: pointer;
 }
+
+.chatbox {
+  border: 1px solid #eee;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.msg {
+  margin-bottom: 12px;
+}
+
+.msg .role {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.msg.user .pre {
+  background: #f5f9ff;
+}
+
+.msg.assistant .pre {
+  background: #f9f9f9;
+}
+
+/* Special styling when the agent is asking a question */
+.msg.assistant.question .pre {
+  border-left: 4px solid #007bff;
+  background: #eef5ff;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  margin-left: 6px;
+  background: #eee;
+}
+
+.badge-info {
+  background: #e0f3ff;
+}
+
+.badge-error {
+  background: #ffe0e0;
+}

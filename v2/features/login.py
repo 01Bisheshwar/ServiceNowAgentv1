@@ -20,10 +20,12 @@ TOKEN_ENDPOINT = f"{SN_INSTANCE}/oauth_token.do"
 
 @login_bp.route("/login", methods=["GET"])
 def login_page():
-    token = session.get("sn_token")
+    # If already logged in, don't show login page — send to logout feature
+    if session.get("sn_token"):
+        return redirect(url_for("logout.logout_page"))
+
     error = session.pop("error", None)
-    token_pretty = json.dumps(token, indent=2) if token else None
-    return render_template("login.html", token=token_pretty, error=error)
+    return render_template("login.html", error=error)
 
 
 @login_bp.route("/login/start", methods=["GET"])
@@ -92,10 +94,4 @@ def oauth_callback():
 
     session["sn_token"] = payload
     session.pop("oauth_state", None)
-    return redirect(url_for("login.login_page"))
-
-
-@login_bp.route("/logout", methods=["GET"])
-def logout():
-    session.clear()
-    return redirect(url_for("login.login_page"))
+    return redirect(url_for("logout.logout_page"))

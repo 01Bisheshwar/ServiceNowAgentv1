@@ -10,7 +10,12 @@
     <div class="card">
       <h1>ServiceNow Dev Portal</h1>
       <p>Choose a feature:</p>
-      <p><a class="button" href="/login">Login (OAuth)</a></p>
+
+      {% if is_logged_in %}
+        <p><a class="button" href="/logout">Logout</a></p>
+      {% else %}
+        <p><a class="button" href="/login">Login (OAuth)</a></p>
+      {% endif %}
     </div>
   </body>
 </html>

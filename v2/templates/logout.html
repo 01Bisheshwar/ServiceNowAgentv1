@@ -3,21 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login - ServiceNow OAuth</title>
+    <title>Logout - ServiceNow OAuth</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
   </head>
   <body>
     <div class="card">
-      <h1>Login</h1>
-      <p>Sign in to ServiceNow using OAuth 2.0 (Authorization Code).</p>
+      <h1>You’re logged in ✅</h1>
+      <p>Your session has an OAuth token.</p>
 
       <p>
-        <a class="button" href="/login/start">Sign in with ServiceNow</a>
+        <a class="button" href="/logout/do">Logout</a>
         <a class="link" href="/">Home</a>
       </p>
 
-      {% if error %}
-        <p class="error"><b>Error:</b> {{ error }}</p>
+      {% if token %}
+        <h2>Token (stored in session)</h2>
+        <pre class="pre">{{ token }}</pre>
       {% endif %}
     </div>
   </body>

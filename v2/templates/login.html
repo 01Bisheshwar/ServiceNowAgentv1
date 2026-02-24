@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login - ServiceNow OAuth</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+  </head>
+  <body>
+    <div class="card">
+      <h1>Login</h1>
+      <p>Sign in to ServiceNow using OAuth 2.0 (Authorization Code).</p>
+
+      <p>
+        <a class="button" href="/login/start">Sign in with ServiceNow</a>
+        <a class="link" href="/">Home</a>
+      </p>
+
+      {% if error %}
+        <p class="error"><b>Error:</b> {{ error }}</p>
+      {% endif %}
+
+      {% if token %}
+        <h2>Token Response</h2>
+        <pre class="pre">{{ token }}</pre>
+        <p><a class="link" href="/logout">Logout</a></p>
+      {% endif %}
+    </div>
+  </body>
+</html>
